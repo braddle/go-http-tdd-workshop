@@ -1,0 +1,24 @@
+name: Test
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: '0'
+      - name: Test
+        run: make test
+      - name: Tag
+        uses: anothrNick/github-tag-action@1.17.2
+        env:
+          RELEASE_BRANCHES: master
+          DEFAULT_BUMP: patch
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+
