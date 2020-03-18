@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	log "github.com/sirupsen/logrus"
@@ -55,6 +56,35 @@ func (s *ApplicationSuite) TestHealthCheck() {
 	s.Equal(http.MethodGet, access["method"].(string))
 }
 
+func (s *ApplicationSuite) TestGetAllBooks() {
+	logBuf := bytes.NewBufferString("")
+	log.SetOutput(logBuf)
+	log.SetFormatter(&log.JSONFormatter{})
+
+	router := mux.NewRouter()
+
+	app.New(router)
+
+	url := "/books"
+	req, _ := http.NewRequest(http.MethodGet, url, nil)
+	recorder := httptest.NewRecorder()
+	router.ServeHTTP(recorder, req)
+
+	//body, _ := ioutil.ReadAll(recorder.Body)
+
+	s.Equal(http.StatusOK, recorder.Code)
+	//s.JSONEq(getAllBooks(), string(body))
+	//
+	//access := make(map[string]interface{})
+	//sc := bufio.NewScanner(logBuf)
+	//sc.Scan()
+	//
+	//json.Unmarshal(sc.Bytes(), &access)
+	//
+	//s.Equal(url, access["request"].(string))
+	//s.Equal(http.MethodGet, access["method"].(string))
+}
+
 func (s *ApplicationSuite) TestNotFound() {
 	logBuf := bytes.NewBufferString("")
 	log.SetOutput(logBuf)
@@ -79,4 +109,11 @@ func (s *ApplicationSuite) TestNotFound() {
 
 	s.Equal(url, access["request"].(string))
 	s.Equal(http.StatusNotFound, int(access["status"].(float64)))
+}
+
+func getAllBooks() string {
+	f, _ := os.Open("../test_data/books.json")
+	b, _ := ioutil.ReadAll(f)
+
+	return string(b)
 }

@@ -27,6 +27,7 @@ func (a *App) init() {
 	a.r.Use(al.Logger)
 
 	a.r.Handle("/healthcheck", a.getHealthCheckHandle()).Methods(http.MethodGet)
+	a.r.Handle("/books", a.getBooksHandle()).Methods(http.MethodGet)
 	a.r.NotFoundHandler = a.r.NewRoute().Handler(a.getNotFoundHandle()).GetHandler()
 }
 
@@ -47,4 +48,8 @@ func (a *App) getHealthCheckHandle() http.Handler {
 
 func (a *App) getNotFoundHandle() http.Handler {
 	return rest.NotFound{}
+}
+
+func (a *App) getBooksHandle() http.Handler {
+	return rest.Books{}
 }

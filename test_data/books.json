@@ -1,0 +1,24 @@
+{"books": [
+  {
+    "isbn-10" : "0099576856",
+    "isbn-13" : "978-0099576853",
+    "title": "Casino Royale",
+    "author": "Ian Fleming",
+    "pages": 256
+  },
+  {
+    "isbn-10" : "9781408855652",
+    "isbn-13" : "978-1408855652",
+    "title": "Harry Potter and the Philosopher's Stone",
+    "author": "J.K. Rowling",
+    "pages": 352
+  },
+  {
+    "isbn-10" : "0060987464",
+    "isbn-13" : "978-0060987466",
+    "title": "Long Hard Road Out Of Hell",
+    "author": "Marilyn Manson",
+    "pages": 288
+  }
+]
+}
