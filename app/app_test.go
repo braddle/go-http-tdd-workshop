@@ -10,6 +10,10 @@ import (
 	"os"
 	"testing"
 
+	"github.com/braddle/go-http-template/book"
+
+	"github.com/google/wire"
+
 	log "github.com/sirupsen/logrus"
 
 	"github.com/braddle/go-http-template/app"
@@ -34,7 +38,7 @@ func (s *ApplicationSuite) TestHealthCheck() {
 
 	router := mux.NewRouter()
 
-	app.New(router)
+	app.New(router, wire.NewSet())
 
 	url := "/healthcheck"
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
@@ -44,7 +48,7 @@ func (s *ApplicationSuite) TestHealthCheck() {
 	body, _ := ioutil.ReadAll(recorder.Body)
 
 	s.Equal(http.StatusOK, recorder.Code)
-	s.JSONEq(`{"status": "OK", "errors": []}`, string(body))
+	s.JSONEq(`{"status": "OK", "errors": ["string"]}`, string(body))
 
 	access := make(map[string]interface{})
 	sc := bufio.NewScanner(logBuf)
@@ -63,7 +67,7 @@ func (s *ApplicationSuite) TestGetAllBooks() {
 
 	router := mux.NewRouter()
 
-	app.New(router)
+	app.New(router, wire.NewSet(ProvideAllBooksProvider))
 
 	url := "/books"
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
@@ -92,7 +96,7 @@ func (s *ApplicationSuite) TestNotFound() {
 
 	router := mux.NewRouter()
 
-	app.New(router)
+	app.New(router, wire.NewSet())
 
 	url := "/never/going/to/exist"
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
@@ -116,4 +120,20 @@ func getAllBooks() string {
 	b, _ := ioutil.ReadAll(f)
 
 	return string(b)
+}
+
+func ProvideAllBooksProvider() book.AllBooksProvider {
+	return mockAllBooksProvider{
+		b: book.Books{},
+		e: nil,
+	}
+}
+
+type mockAllBooksProvider struct {
+	b book.Books
+	e error
+}
+
+func (m mockAllBooksProvider) GetAllBooks() (book.Books, error) {
+	return m.b, m.e
 }

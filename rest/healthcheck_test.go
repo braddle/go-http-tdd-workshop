@@ -28,5 +28,5 @@ func (s *HealthCheckSuite) TestHealthyService() {
 	body, _ := ioutil.ReadAll(recorder.Body)
 
 	s.Equal(http.StatusOK, recorder.Code)
-	s.JSONEq(`{"status": "OK", "errors": []}`, string(body))
+	s.JSONEq(`{"status": "OK", "errors": ["string"]}`, string(body))
 }

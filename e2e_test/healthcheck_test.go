@@ -25,5 +25,5 @@ func (s *HealthCheckSuite) TestHealthyService() {
 	bytes, _ := ioutil.ReadAll(resp.Body)
 	actBody := string(bytes)
 
-	s.JSONEq(`{"status": "OK", "errors": []}`, actBody)
+	s.JSONEq(`{"status": "OK", "errors": ["string"]}`, actBody)
 }

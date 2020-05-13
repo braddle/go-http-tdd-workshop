@@ -1,6 +1,7 @@
 package rest_test
 
 import (
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -24,15 +25,31 @@ func TestBooksSuite(t *testing.T) {
 
 func (s *BooksSuite) TestAvailableBooksReturned() {
 	f := FakeAllBooksProvider{
-		b: book.Books{B: []book.Book{
-			{
-				ISBN10: "1234567890",
-				ISBN13: "321-1234567890",
-				Title:  "Testing All The Things",
-				Author: "Mark Bradley",
-				Pages:  418,
+		b: book.Books{
+			B: []book.Book{
+				{
+					ISBN10: "0099576856",
+					ISBN13: "978-0099576853",
+					Title:  "Casino Royale",
+					Author: "Ian Fleming",
+					Pages:  256,
+				},
+				{
+					ISBN10: "9781408855652",
+					ISBN13: "978-1408855652",
+					Title:  "Harry Potter and the Philosopher's Stone",
+					Author: "J.K. Rowling",
+					Pages:  352,
+				},
+				{
+					ISBN10: "0060987464",
+					ISBN13: "978-0060987466",
+					Title:  "Long Hard Road Out Of Hell",
+					Author: "Marilyn Manson",
+					Pages:  288,
+				},
 			},
-		}},
+		},
 		e: nil,
 	}
 	h := rest.NewBooksHandler(f)
@@ -41,10 +58,44 @@ func (s *BooksSuite) TestAvailableBooksReturned() {
 	req := httptest.NewRequest(http.MethodGet, "/books", nil)
 	h.ServeHTTP(recorder, req)
 
-	//body, _ := ioutil.ReadAll(recorder.Body)
+	body, _ := ioutil.ReadAll(recorder.Body)
 
 	s.Equal(http.StatusOK, recorder.Code)
-	//s.JSONEq(getAllBooks(), string(body))
+	s.JSONEq(getAllBooks(), string(body))
+}
+
+func (s *BooksSuite) TestWhenNoBooksAvailable() {
+	f := FakeAllBooksProvider{
+		b: book.Books{B: []book.Book{}},
+		e: nil,
+	}
+	h := rest.NewBooksHandler(f)
+
+	recorder := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/books", nil)
+	h.ServeHTTP(recorder, req)
+
+	body, _ := ioutil.ReadAll(recorder.Body)
+
+	s.Equal(http.StatusOK, recorder.Code)
+	s.JSONEq(getEmptyBooks(), string(body))
+}
+
+func (s *BooksSuite) TestErrorRetrievingBooks() {
+	f := FakeAllBooksProvider{
+		b: book.Books{B: []book.Book{}},
+		e: errors.New("ITS BROKED"),
+	}
+	h := rest.NewBooksHandler(f)
+
+	recorder := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodGet, "/books", nil)
+	h.ServeHTTP(recorder, req)
+
+	body, _ := ioutil.ReadAll(recorder.Body)
+
+	s.Equal(http.StatusOK, recorder.Code)
+	s.JSONEq(getEmptyBooks(), string(body))
 }
 
 func getAllBooks() string {
@@ -52,6 +103,10 @@ func getAllBooks() string {
 	b, _ := ioutil.ReadAll(f)
 
 	return string(b)
+}
+
+func getEmptyBooks() string {
+	return `{"books": []}`
 }
 
 type FakeAllBooksProvider struct {

@@ -1,6 +1,7 @@
 package rest
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/braddle/go-http-template/book"
@@ -15,4 +16,9 @@ func NewBooksHandler(p book.AllBooksProvider) Books {
 }
 
 func (h Books) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
+	//books, _ := h.p.GetAllBooks()
+	books := book.Books{}
+	b, _ := json.Marshal(books)
+
+	resp.Write(b)
 }

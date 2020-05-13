@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/wire"
+
 	"github.com/braddle/go-http-template/accesslog"
 	"github.com/braddle/go-http-template/clock"
 
@@ -13,10 +15,15 @@ import (
 
 type App struct {
 	r *mux.Router
+	p wire.ProviderSet
 }
 
-func New(r *mux.Router) *App {
-	a := &App{r: r}
+func New(r *mux.Router, p wire.ProviderSet) *App {
+	//wire.Build(p)
+	a := &App{
+		r: r,
+		p: p,
+	}
 	a.init()
 
 	return a
@@ -51,5 +58,5 @@ func (a *App) getNotFoundHandle() http.Handler {
 }
 
 func (a *App) getBooksHandle() http.Handler {
-	return rest.Books{}
+	return rest.NewBooksHandler(a.p.AllBooksProvider)
 }

@@ -1,7 +1,6 @@
 package pact_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/pact-foundation/pact-go/types"
@@ -27,8 +26,9 @@ func TestPactProviderSuite(t *testing.T) {
 }
 
 func (s *PactProviderSuite) TestPacts() {
-	s.T().Skip("PACT FUN. issues with response body matching!")
-	res, _ := s.pact.VerifyProvider(
+	//s.T().Skip("PACT FUN. issues with response body matching!")
+	//res, _ := s.pact.VerifyProvider(
+	s.pact.VerifyProvider(
 		s.T(),
 		types.VerifyRequest{
 			ProviderBaseURL:            "http://http:8080",
@@ -40,20 +40,19 @@ func (s *PactProviderSuite) TestPacts() {
 		},
 	)
 
-	fmt.Printf("SUMMARY: %s\n", res.SummaryLine)
-	for _, exp := range res.Examples {
-		if exp.Status == "failed" {
-			fmt.Printf("DESCRIPTION: %s\n", exp.Description)
-			fmt.Printf("FULL DESCRIPTION: %s\n", exp.FullDescription)
-			fmt.Printf("PENDING MESSAGE: %v\n", exp.PendingMessage)
-			fmt.Printf("STATUS: %s\n", exp.Status)
-			fmt.Printf("EXEPCTION CLASS: %s\n", exp.Exception.Class)
-			fmt.Printf("EXEPCTION MESSAGE: %s\n", exp.Exception.Message)
-			//fmt.Printf("EXEPCTION MESSAGE: %s\n", exp.Exception.)
-
-			fmt.Print("_________________________________________\n")
-			fmt.Print("_________________________________________\n\n\n\n\n\n\n\n")
-		}
-
-	}
+	//fmt.Printf("SUMMARY: %s\n", res.SummaryLine)
+	//for _, exp := range res.Examples {
+	//	//if exp.Status == "failed" {
+	//	fmt.Printf("DESCRIPTION: %s\n", exp.Description)
+	//	fmt.Printf("FULL DESCRIPTION: %s\n", exp.FullDescription)
+	//	fmt.Printf("PENDING MESSAGE: %v\n", exp.PendingMessage)
+	//	fmt.Printf("STATUS: %s\n", exp.Status)
+	//	fmt.Printf("EXEPCTION CLASS: %s\n", exp.Exception.Class)
+	//	fmt.Printf("EXEPCTION MESSAGE: %s\n", exp.Exception.Message)
+	//	//fmt.Printf("EXEPCTION MESSAGE: %s\n", exp.Exception.)
+	//
+	//	fmt.Print("_________________________________________\n")
+	//	fmt.Print("_________________________________________\n\n\n\n\n\n\n\n")
+	//	//}
+	//}
 }

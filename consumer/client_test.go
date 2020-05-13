@@ -52,9 +52,14 @@ func (s *ConsumerSuite) TestHealthCheck() {
 		h, err := c.HeathCheck()
 
 		s.Equal("OK", h.Status)
-		s.Empty(h.Errors)
+		s.Equal("string", h.Errors[0])
 
 		return err
+	}
+
+	type Status struct {
+		Status string   `json:"status" pact:"example=OK"`
+		Errors []string `json:"errors"`
 	}
 
 	s.pact.AddInteraction().
@@ -68,7 +73,7 @@ func (s *ConsumerSuite) TestHealthCheck() {
 		WillRespondWith(dsl.Response{
 			Status:  http.StatusOK,
 			Headers: dsl.MapMatcher{"Content-Type": dsl.String("application/json")},
-			Body:    `{"status": "OK", "errors": []}`,
+			Body:    dsl.Match(&Status{}),
 		})
 
 	s.NoError(s.pact.Verify(test))

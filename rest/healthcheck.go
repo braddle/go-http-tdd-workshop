@@ -14,7 +14,7 @@ type Content struct {
 }
 
 func (h HealthCheck) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	c := Content{S: "DAVE", E: []string{}}
+	c := Content{S: "OK", E: []string{"string"}}
 
 	b, _ := json.Marshal(c)
 
